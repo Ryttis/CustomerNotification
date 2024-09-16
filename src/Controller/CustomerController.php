@@ -3,13 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\Customer;
-use App\EntityRepository\CustomerRepository;
 use App\Model\Message;
 use App\Service\EmailSender;
 use App\Service\Messenger;
 use App\Service\SMSSender;
-use App\Service\Validator;
-use App\Service\WeatherService;
+use App\EntityRepository\CustomerRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,26 +18,39 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class CustomerController extends AbstractController
 {
+    private $customerRepository;
+    private $messenger;
+
+    public function __construct(CustomerRepository $customerRepository, Messenger $messenger)
+    {
+        $this->customerRepository = $customerRepository;
+        $this->messenger = $messenger;
+    }
 
     /**
      *
-     * @Route("/customer/{code}/notifications", name="customer_notifications", methods={"GET"})
+     * @Route("/api/customer/{code}/notifications", name="customer_notifications", methods={"POST"})
      */
     public function notifyCustomer(string $code, Request $request): Response
     {
         $requestData = json_decode($request->getContent(), true);
 
-        $repository = new CustomerRepository();
-        /** @var Customer $customer */
-        $customer = $repository->find($code);
+        if (!isset($requestData)) {
+            return new Response('Invalid request data', Response::HTTP_BAD_REQUEST);
+        }
+
+        $customer = $this->customerRepository->findOneBy(['code' => $code]);
+
+        if (!$customer) {
+            return new Response('Customer not found', Response::HTTP_NOT_FOUND);
+        }
 
         $message = new Message();
-        $message->setBody($customer->getNotificationType());
-        $message->setType($requestData->type);
+        $message->setBody($requestData['body']);
+        $message->setType($customer->getNotificationType());
 
-        $messenger = new Messenger([new EmailSender(), new SMSSender()]);
-        $messenger->send($message);
+        $this->messenger->send($message);
 
-        return new Response("OK");
+        return new Response('Notification sent', Response::HTTP_OK);
     }
 }

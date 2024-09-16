@@ -6,8 +6,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class Message
 {
-    public const TYPE_SMS = 'sms';
-    public const TYPE_EMAIL = 'email';
+    public const TYPE_SMS = 'SMS';
+    public const TYPE_EMAIL = 'EMAIL';
     /**
      * @Assert\NotBlank(message="body cannot be empty", payload="101")
      */

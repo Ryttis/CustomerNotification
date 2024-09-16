@@ -7,17 +7,17 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity
+ * @ORM\Table(name="customers")
  */
 class Customer
 {
 
     /**
-     *
+     * @ORM\Id
      * @ORM\Column(name="`customer_code`", type="string", length=32, nullable=false)
-     *
      * @var string
      */
-    public string $code;
+    private string $code;
 
 
     /**
@@ -26,7 +26,7 @@ class Customer
      *
      * @var string
      */
-    public string $notification_type = Message::TYPE_EMAIL;
+    private string $notification_type = Message::TYPE_EMAIL;
 
     /**
      * @return string

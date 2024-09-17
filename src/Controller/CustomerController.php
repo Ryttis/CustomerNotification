@@ -2,16 +2,12 @@
 
 namespace App\Controller;
 
-use App\Entity\Customer;
 use App\Model\Message;
-use App\Service\EmailSender;
 use App\Service\Messenger;
-use App\Service\SMSSender;
 use App\EntityRepository\CustomerRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
 
 /**
  *
